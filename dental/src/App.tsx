@@ -1,713 +1,1280 @@
-import { useState, useEffect } from 'react';
-import { 
-  Sparkles, 
-  ChevronDown, 
-  ShieldCheck, 
-  Star, 
-  ArrowRight, 
-  Award, 
-  Plane, 
-  Tv, 
-  Lock,
-  Compass,
-  Coins
+import React, { useState, useEffect } from 'react';
+import { motion, useScroll } from 'framer-motion';
+import {
+  Menu,
+  X,
+  Sparkles,
+  Star,
+  Check,
+  ArrowRight,
+  Heart,
+  Zap,
+  Shield,
+  Users,
+  Clock,
+  Award,
+  ChevronDown,
+  Phone,
+  Mail,
+  MapPin,
+  Share2,
 } from 'lucide-react';
-import Navbar from './components/Navbar';
-import InteractiveSmileSimulator from './components/InteractiveSmileSimulator';
-import InteractiveEstimator from './components/InteractiveEstimator';
-import LiveInteractiveScheduler from './components/LiveInteractiveScheduler';
-import { languageCopy, faqData, testimonialsData, journeySteps } from './data/dentalData';
 
 export default function App() {
-  const [currentLang, setLang] = useState<'en' | 'ru'>('en');
-  const [activeFaq, setActiveFaq] = useState<string | null>(null);
-  const [isSchedulerOpen, setIsSchedulerOpen] = useState(false);
-  const [prefilledTreatment, setPrefilledTreatment] = useState<string>('veneers');
-  const [urgentCoupons, setUrgentCoupons] = useState(3);
-  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { scrollY } = useScroll();
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const copy = languageCopy[currentLang];
-
-  // Dynamic countdown-ticker simulation for conversion focus urgency
   useEffect(() => {
-    const timer = setInterval(() => {
-      setUrgentCoupons(prev => (prev > 1 ? prev - 1 : 3));
-    }, 45000);
-    return () => clearInterval(timer);
-  }, []);
+    const unsubscribe = scrollY.onChange((latest) => {
+      setIsScrolled(latest > 50);
+    });
+    return () => unsubscribe();
+  }, [scrollY]);
 
-  const triggerBookingModal = (treatmentName?: string) => {
-    if (treatmentName) {
-      setPrefilledTreatment(treatmentName);
-    }
-    setIsSchedulerOpen(true);
+  const navItems = [
+    { label: 'Home', href: '#home' },
+    { label: 'Services', href: '#services' },
+    { label: 'About', href: '#about' },
+    { label: 'Testimonials', href: '#testimonials' },
+    { label: 'Pricing', href: '#pricing' },
+    { label: 'FAQ', href: '#faq' },
+  ];
+
+  const services = [
+    {
+      icon: Sparkles,
+      title: 'Teeth Whitening',
+      description: 'Professional teeth whitening for a brighter, more confident smile',
+    },
+    {
+      icon: Shield,
+      title: 'Preventive Care',
+      description: 'Expert cleanings and checkups to maintain optimal oral health',
+    },
+    {
+      icon: Heart,
+      title: 'Cosmetic Dentistry',
+      description: 'Transform your smile with veneers, bonding, and aligners',
+    },
+    {
+      icon: Zap,
+      title: 'Emergency Services',
+      description: '24/7 emergency care for urgent dental issues',
+    },
+    {
+      icon: Award,
+      title: 'Implants & Restorations',
+      description: 'Advanced solutions for missing or damaged teeth',
+    },
+    {
+      icon: Users,
+      title: 'Family Dentistry',
+      description: 'Comprehensive dental care for the entire family',
+    },
+  ];
+
+  const benefits = [
+    {
+      title: 'State-of-the-Art Technology',
+      description: 'We use the latest dental technology including digital imaging and laser treatments',
+    },
+    {
+      title: 'Expert Practitioners',
+      description: 'Our dentists are highly qualified with years of experience in advanced procedures',
+    },
+    {
+      title: 'Patient Comfort First',
+      description: 'Relaxing environment with sedation options for anxious patients',
+    },
+    {
+      title: 'Comprehensive Services',
+      description: 'From routine cleanings to complex restorations, all under one roof',
+    },
+  ];
+
+  const testimonials = [
+    {
+      name: 'Sarah Johnson',
+      role: 'Patient',
+      content: 'Best dental experience I\'ve ever had. The staff is incredibly professional and caring.',
+      rating: 5,
+      initials: 'SJ',
+    },
+    {
+      name: 'Michael Chen',
+      role: 'Patient',
+      content: 'The whitening treatment completely transformed my smile. Highly recommended!',
+      rating: 5,
+      initials: 'MC',
+    },
+    {
+      name: 'Emily Williams',
+      role: 'Patient',
+      content: 'Professional, friendly, and thorough. I\'ve been coming here for 3 years now.',
+      rating: 5,
+      initials: 'EW',
+    },
+  ];
+
+  const pricingPlans = [
+    {
+      name: 'Essential',
+      price: '49',
+      description: 'Perfect for preventive care',
+      features: [
+        'Professional cleaning',
+        'Digital X-rays',
+        'Oral health assessment',
+        'Fluoride treatment',
+      ],
+      popular: false,
+    },
+    {
+      name: 'Professional',
+      price: '99',
+      description: 'Most popular for comprehensive care',
+      features: [
+        'Everything in Essential',
+        'Cosmetic consultations',
+        'Whitening treatment',
+        'Priority scheduling',
+        'Annual teeth cleanings (2x)',
+      ],
+      popular: true,
+    },
+    {
+      name: 'Premium',
+      price: '199',
+      description: 'For advanced procedures',
+      features: [
+        'Everything in Professional',
+        'Implant consultations',
+        'Advanced restorations',
+        'VIP concierge service',
+        'Unlimited emergency visits',
+      ],
+      popular: false,
+    },
+  ];
+
+  const faqs = [
+    {
+      question: 'How often should I visit the dentist?',
+      answer: 'We recommend visiting every 6 months for routine cleanings and checkups to maintain optimal oral health.',
+    },
+    {
+      question: 'Do you offer emergency appointments?',
+      answer: 'Yes, we offer 24/7 emergency dental services for urgent issues like severe pain or trauma.',
+    },
+    {
+      question: 'What payment options do you accept?',
+      answer: 'We accept all major credit cards, bank transfers, and offer flexible payment plans for larger procedures.',
+    },
+    {
+      question: 'Is teeth whitening safe?',
+      answer: 'Professional teeth whitening is safe when performed by qualified dentists. We use approved whitening systems.',
+    },
+    {
+      question: 'How long do dental implants last?',
+      answer: 'With proper care, dental implants can last 20+ years. They\'re a long-term investment in your smile.',
+    },
+    {
+      question: 'Do you treat dental anxiety?',
+      answer: 'Yes, we offer sedation options and maintain a calm, supportive environment for anxious patients.',
+    },
+  ];
+
+  // Smooth easing functions for premium feel
+  const gentleEasing: any = [0.4, 0, 0.2, 1];
+  const smoothEase: any = [0.25, 0.1, 0.25, 1];
+  
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.15,
+        when: 'beforeChildren',
+      },
+    },
   };
 
-  const nextTestimonial = () => {
-    setActiveTestimonialIndex((prev) => (prev + 1) % testimonialsData.length);
-  };
-
-  const prevTestimonial = () => {
-    setActiveTestimonialIndex((prev) => (prev - 1 + testimonialsData.length) % testimonialsData.length);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { 
+        duration: 0.9, 
+        ease: gentleEasing 
+      },
+    },
   };
 
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-cyan-500 selection:text-slate-950 scroll-smooth">
-      
-      {/* Dynamic Background Noise and Ambient Light Glows */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-20%] w-[80%] h-[60%] bg-cyan-600/10 rounded-full blur-[160px]" />
-        <div className="absolute top-[40%] right-[-10%] w-[70%] h-[70%] bg-indigo-500/10 rounded-full blur-[180px]" />
-        <div className="absolute bottom-[-10%] left-[20%] w-[60%] h-[50%] bg-emerald-500/5 rounded-full blur-[150px]" />
-      </div>
+    <div className="min-h-screen bg-white overflow-x-hidden">
+      {/* Navigation */}
+      <motion.nav
+        className={`fixed top-0 w-full z-50 transition-all duration-500 ${
+          isScrolled
+            ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-lg shadow-gray-900/5'
+            : 'bg-transparent'
+        }`}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            {/* Logo */}
+            <motion.div
+              className="flex items-center space-x-2 cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-full flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent hidden sm:inline">
+                DentalCare
+              </span>
+            </motion.div>
 
-      {/* Sticky Premium Navbar */}
-      <Navbar 
-        currentLang={currentLang} 
-        setLang={setLang} 
-        onOpenBooking={() => triggerBookingModal()} 
-      />
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-1">
+              {navItems.map((item, i) => (
+                <motion.a
+                  key={i}
+                  href={item.href}
+                  className="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg transition-colors hover:bg-gray-100 hover:text-gray-900"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {item.label}
+                </motion.a>
+              ))}
+            </div>
+
+            {/* CTA Button */}
+            <motion.a
+              href="#contact"
+              className="hidden sm:flex items-center space-x-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-semibold text-sm hover:shadow-lg hover:shadow-blue-400/50 transition-all"
+              whileHover={{ scale: 1.05, translateY: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Phone className="w-4 h-4" />
+              <span>Book Now</span>
+            </motion.a>
+
+            {/* Mobile Menu Button */}
+            <motion.button
+              className="md:hidden p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              whileTap={{ scale: 0.9 }}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6 text-gray-900" />
+              ) : (
+                <Menu className="w-6 h-6 text-gray-900" />
+              )}
+            </motion.button>
+          </div>
+
+          {/* Mobile Navigation */}
+          <motion.div
+            className="md:hidden bg-white/95 backdrop-blur-lg border-t border-gray-200/50"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: mobileMenuOpen ? 1 : 0,
+              height: mobileMenuOpen ? 'auto' : 0,
+            }}
+            transition={{ duration: 0.3 }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div className="px-4 pt-2 pb-4 space-y-2">
+              {navItems.map((item, i) => (
+                <a
+                  key={i}
+                  href={item.href}
+                  className="block px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </a>
+              ))}
+              <a
+                href="#contact"
+                className="block px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-semibold text-center"
+              >
+                Book Now
+              </a>
+            </div>
+          </motion.div>
+        </div>
+      </motion.nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left Hero Grid Content */}
-            <div className="lg:col-span-7 space-y-8 text-left">
-              
-              {/* Premium Top Badge */}
-              <div className="inline-flex items-center space-x-2.5 bg-slate-900/95 border border-cyan-400/30 px-4 py-2 rounded-full shadow-lg shadow-cyan-500/5 animate-fade-in">
-                <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
-                </span>
-                <span className="text-xs font-semibold text-slate-200 tracking-wide">
-                  {copy.heroBadge}
-                </span>
-              </div>
-
-              {/* Breathtaking Main Titles */}
-              <div className="space-y-3">
-                <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-none">
-                  {copy.heroTitle1} <br />
-                  <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">
-                    {copy.heroTitleHighlight}
-                  </span> <br />
-                  <span className="text-3xl sm:text-5xl font-extrabold text-slate-200">
-                    {copy.heroTitle2}
-                  </span>
-                </h1>
-                
-                <p className="text-slate-400 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed font-light">
-                  {copy.heroSub}
-                </p>
-              </div>
-
-              {/* Conversion urgency indicator element */}
-              <div className="p-4 bg-slate-900/80 border border-white/5 rounded-2xl flex items-center space-x-4 max-w-xl shadow-md">
-                <div className="bg-cyan-500/10 p-2.5 rounded-xl border border-cyan-400/20 text-cyan-400">
-                  <Plane className="h-5 w-5 animate-pulse" />
-                </div>
-                <div className="text-xs">
-                  <p className="text-white font-bold">
-                    {currentLang === 'en' 
-                      ? '🎯 Flash Airfare Reimbursement Promo Active' 
-                      : '🎯 Акция: Компенсация авиабилета активна'}
-                  </p>
-                  <p className="text-slate-400 mt-0.5">
-                    {currentLang === 'en' 
-                      ? `Only ${urgentCoupons} luxury travel packages remaining for UK/US entries this week.` 
-                      : `Осталось всего ${urgentCoupons} VIP-пакета с оплатой билета на эту неделю.`}
-                  </p>
-                </div>
-              </div>
-
-              {/* Elegant Call to action buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                <button
-                  onClick={() => triggerBookingModal('General Smile Consultation')}
-                  className="bg-gradient-to-r from-cyan-400 via-teal-400 to-indigo-500 text-slate-950 font-black px-8 py-4 rounded-2xl shadow-xl shadow-cyan-400/20 hover:shadow-cyan-400/40 hover:scale-[1.01] transition-all flex items-center justify-center space-x-2 text-sm uppercase tracking-wider cursor-pointer"
-                >
-                  <span>{copy.heroBtnMain}</span>
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-
-                <button
-                  onClick={() => {
-                    const el = document.getElementById('estimator');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 py-4 rounded-2xl border border-white/10 transition-all flex items-center justify-center space-x-2 text-sm cursor-pointer"
-                >
-                  <span>{copy.heroBtnSub}</span>
-                </button>
-              </div>
-
-              {/* Trust Badge Social Proof */}
-              <div className="pt-6 border-t border-white/5 flex flex-wrap items-center gap-6">
-                <div className="flex items-center space-x-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                  ))}
-                  <span className="text-white text-xs font-black ml-2">4.9/5</span>
-                </div>
-                <span className="text-xs text-slate-400">
-                  {copy.heroTrustText}
-                </span>
-                <div className="flex items-center space-x-3 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
-                  <span>Trustpilot</span>
-                  <span>•</span>
-                  <span>Nobel Biocare Certified</span>
-                  <span>•</span>
-                  <span>E-Max Partner</span>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Right Hero Grid Content (Beautiful Live Widget Preview Panel) */}
-            <div className="lg:col-span-5 relative mt-8 lg:mt-0">
-              
-              <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-indigo-600 rounded-3xl blur-[30px] opacity-20 animate-pulse pointer-events-none" />
-              
-              {/* Premium Floating Trust Cards */}
-              <div className="absolute -top-6 -left-6 bg-slate-900/90 border border-white/10 p-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 z-20 backdrop-blur-md">
-                <div className="h-9 w-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 block uppercase font-bold">WARRANTY</span>
-                  <span className="text-xs text-white font-extrabold block">25 Year Guarantee</span>
-                </div>
-              </div>
-
-              <div className="absolute -bottom-6 -right-4 bg-slate-900/90 border border-white/10 p-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 z-20 backdrop-blur-md">
-                <div className="h-9 w-9 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400">
-                  <Compass className="h-5 w-5" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 block uppercase font-bold">VIP SERVICE</span>
-                  <span className="text-xs text-white font-extrabold block">Chauffeur & 5★ Hotel</span>
-                </div>
-              </div>
-
-              {/* Main Visual Showcase Frame */}
-              <div className="relative rounded-3xl overflow-hidden border border-white/15 bg-slate-900/80 backdrop-blur-md p-6 shadow-2xl space-y-6">
-                
-                <div className="aspect-video rounded-2xl overflow-hidden relative">
-                  <img 
-                    src="https://images.pexels.com/photos/6627574/pexels-photo-6627574.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200" 
-                    alt="Perfect Aesthetic Smile Results" 
-                    className="object-cover w-full h-full"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-                  <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center bg-slate-950/75 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-                    <div>
-                      <span className="text-[10px] text-slate-400 block">PATIENT REALITY</span>
-                      <span className="text-xs font-bold text-white">Sarah J. (New York) • After Veneers</span>
-                    </div>
-                    <span className="bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-md">
-                      SAVED $24,500
-                    </span>
-                  </div>
-                </div>
-
-                {/* Quick stats mini-counter grid */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-slate-950/80 p-3 rounded-xl border border-white/5 text-center">
-                    <span className="text-lg md:text-xl font-black text-cyan-400 block">
-                      12,500+
-                    </span>
-                    <span className="text-[9px] text-slate-400 uppercase tracking-wider block mt-0.5">
-                      {copy.heroStat1Lbl}
-                    </span>
-                  </div>
-                  <div className="bg-slate-950/80 p-3 rounded-xl border border-white/5 text-center">
-                    <span className="text-lg md:text-xl font-black text-indigo-400 block">
-                      {copy.heroStat2Num}
-                    </span>
-                    <span className="text-[9px] text-slate-400 uppercase tracking-wider block mt-0.5">
-                      {copy.heroStat2Lbl}
-                    </span>
-                  </div>
-                  <div className="bg-slate-950/80 p-3 rounded-xl border border-white/5 text-center">
-                    <span className="text-lg md:text-xl font-black text-teal-400 block">
-                      72 Hours
-                    </span>
-                    <span className="text-[9px] text-slate-400 uppercase tracking-wider block mt-0.5">
-                      {copy.heroStat3Lbl}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Instant action block */}
-                <button
-                  onClick={() => triggerBookingModal('Free Smile Assessment')}
-                  className="w-full bg-slate-950 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl border border-white/10 text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer"
-                >
-                  <Sparkles className="h-4 w-4 text-cyan-400" />
-                  <span>{currentLang === 'en' ? 'Simulate Your Perfect Face Harmony' : 'Начать цифровой анализ лица'}</span>
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-
+      <section
+        id="home"
+        className="relative min-h-screen pt-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center overflow-hidden"
+      >
+        {/* Animated Background - Slower and more subtle */}
+        <div className="absolute inset-0 -z-10">
+          <motion.div
+            className="absolute top-20 left-10 w-72 h-72 bg-blue-300 rounded-full opacity-20 blur-3xl"
+            animate={{
+              scale: [1, 1.15, 1],
+              x: [0, 30, 0],
+              y: [0, 30, 0],
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-20 right-10 w-72 h-72 bg-cyan-300 rounded-full opacity-20 blur-3xl"
+            animate={{
+              scale: [1, 1.15, 1],
+              x: [0, -30, 0],
+              y: [0, -30, 0],
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+          />
         </div>
-      </section>
 
-      {/* Trust Badges Bar */}
-      <section className="py-8 bg-slate-900/60 border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-[11px] text-slate-400 uppercase tracking-widest mb-4">
-            {currentLang === 'en' ? 'OUR INTERNATIONAL TRUST CREDENTIALS' : 'НАШИ МЕЖДУНАРОДНЫЕ СЕРТИФИКАТЫ И ПАРТНЕРЫ'}
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:opacity-100 transition-all duration-300">
-            <span className="text-sm font-bold text-white tracking-widest">NOBEL BIOCARE™</span>
-            <span className="text-sm font-bold text-white tracking-widest">IPS E.MAX® GERMANY</span>
-            <span className="text-sm font-bold text-white tracking-widest">PHILIPS ZOOM™</span>
-            <span className="text-sm font-bold text-white tracking-widest">ISO 9001 COMPLIANT</span>
-            <span className="text-sm font-bold text-white tracking-widest">EU HEALTH REGISTER</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Smile Simulator Section */}
-      <InteractiveSmileSimulator 
-        currentLang={currentLang} 
-        onBookTreatment={triggerBookingModal} 
-      />
-
-      {/* Premium Treatment Cards & Included Services Showcase */}
-      <section id="services" className="py-24 relative overflow-hidden bg-slate-900/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          {/* Header */}
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">
-              {currentLang === 'en' ? 'Premium Aesthetic Procedures' : 'Услуги эстетической медицины'}
-            </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-2">
-              {currentLang === 'en' ? 'Crafting Iconic Smiling Profiles' : 'Создание безупречного контура'}
-            </h2>
-            <p className="text-slate-400 mt-4 text-sm md:text-base">
-              {currentLang === 'en' 
-                ? 'We specialize in custom medical dentistry using robotic CAD/CAM milling & original Western certified implants.' 
-                : 'Мы специализируемся на высокотехнологичной медицине с использованием роботизированного оборудования и швейцарских материалов.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* Service 1 */}
-            <div className="bg-slate-950 p-6 rounded-3xl border border-white/5 hover:border-cyan-500/30 transition-all duration-300 flex flex-col justify-between group">
-              <div className="space-y-4">
-                <div className="aspect-video w-full rounded-2xl overflow-hidden relative">
-                  <img src="https://images.pexels.com/photos/6627572/pexels-photo-6627572.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200" alt="Veneers Treatment" className="object-cover w-full h-full group-hover:scale-105 transition-all duration-500" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="bg-cyan-500/10 text-cyan-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">IPS E.MAX®</span>
-                  <span className="text-xs text-emerald-400 font-bold">15-Year Warranty</span>
-                </div>
-                <h3 className="text-xl font-bold text-white">{currentLang === 'en' ? 'Porcelain Veneers' : 'Фарфоровые виниры'}</h3>
-                <p className="text-slate-400 text-xs leading-relaxed">
-                  {currentLang === 'en' 
-                    ? 'Individually sculpted porcelain shells designed via 3D AI modeling. Perfect color tone integration.' 
-                    : 'Индивидуально смоделированные тончайшие пластинки из оригинального немецкого фарфора E-Max.'}
-                </p>
-              </div>
-              <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between">
-                <span className="text-xs text-slate-400">{currentLang === 'en' ? 'From £280/tooth' : 'От £280 за зуб'}</span>
-                <button onClick={() => triggerBookingModal('IPS E-Max Porcelain Veneers')} className="text-xs font-bold text-cyan-400 flex items-center gap-1 group-hover:underline cursor-pointer">
-                  <span>{currentLang === 'en' ? 'Learn More' : 'Подробнее'}</span>
-                  <ArrowRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-
-            {/* Service 2 */}
-            <div className="bg-slate-950 p-6 rounded-3xl border border-white/5 hover:border-cyan-500/30 transition-all duration-300 flex flex-col justify-between group">
-              <div className="space-y-4">
-                <div className="aspect-video w-full rounded-2xl overflow-hidden relative">
-                  <img src="https://images.pexels.com/photos/5355837/pexels-photo-5355837.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200" alt="Implants Treatment" className="object-cover w-full h-full group-hover:scale-105 transition-all duration-500" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="bg-indigo-500/10 text-indigo-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">NOBEL BIOCARE®</span>
-                  <span className="text-xs text-emerald-400 font-bold">Lifetime Warranty</span>
-                </div>
-                <h3 className="text-xl font-bold text-white">{currentLang === 'en' ? 'All-on-4 / All-on-6 Implants' : 'Имплантация All-on-4 / All-on-6'}</h3>
-                <p className="text-slate-400 text-xs leading-relaxed">
-                  {currentLang === 'en' 
-                    ? 'Swiss full-jaw permanent prosthetics over Nobel implants. Complete smile restoration in 1 single day.' 
-                    : 'Швейцарское полное протезирование за 1 день с пожизненной международной гарантией.'}
-                </p>
-              </div>
-              <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between">
-                <span className="text-xs text-slate-400">{currentLang === 'en' ? 'From £3,500/jaw' : 'От £3,500 челюсть'}</span>
-                <button onClick={() => triggerBookingModal('All-on-4/6 Nobel Implants')} className="text-xs font-bold text-indigo-400 flex items-center gap-1 group-hover:underline cursor-pointer">
-                  <span>{currentLang === 'en' ? 'Learn More' : 'Подробнее'}</span>
-                  <ArrowRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-
-            {/* Service 3 */}
-            <div className="bg-slate-950 p-6 rounded-3xl border border-white/5 hover:border-cyan-500/30 transition-all duration-300 flex flex-col justify-between group">
-              <div className="space-y-4">
-                <div className="aspect-video w-full rounded-2xl overflow-hidden relative">
-                  <img src="https://images.pexels.com/photos/3881449/pexels-photo-3881449.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200" alt="Whitening Treatment" className="object-cover w-full h-full group-hover:scale-105 transition-all duration-500" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="bg-teal-500/10 text-teal-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">PHILIPS ZOOM™</span>
-                  <span className="text-xs text-emerald-400 font-bold">Zero Sensitivity</span>
-                </div>
-                <h3 className="text-xl font-bold text-white">{currentLang === 'en' ? 'Philips Laser Whitening' : 'Лазерное отбеливание'}</h3>
-                <p className="text-slate-400 text-xs leading-relaxed">
-                  {currentLang === 'en' 
-                    ? 'Get 8 shades whiter enamel. Fast 45 minutes therapy using customized cold-light LED protection gels.' 
-                    : 'Осветление эмали до 8 тонов по шкале Vita за один комфортный 45-минутный сеанс.'}
-                </p>
-              </div>
-              <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between">
-                <span className="text-xs text-slate-400">{currentLang === 'en' ? 'Special: £280 Package' : 'Акция: £280 пакет'}</span>
-                <button onClick={() => triggerBookingModal('Philips Zoom Laser Whitening')} className="text-xs font-bold text-teal-400 flex items-center gap-1 group-hover:underline cursor-pointer">
-                  <span>{currentLang === 'en' ? 'Learn More' : 'Подробнее'}</span>
-                  <ArrowRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Included VIP services list */}
-          <div className="mt-16 bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 p-8 rounded-3xl border border-white/5 text-center space-y-6">
-            <h3 className="text-lg md:text-xl font-bold text-white">
-              {currentLang === 'en' ? '🎁 Premium Travel Package Included Free with Treatments Over £3,500' : '🎁 Премиальный тур-пакет бесплатно при лечении от £3,500'}
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs text-slate-300">
-              <div className="space-y-1">
-                <span className="block font-bold text-white">5★ Boutique Hotel</span>
-                <span className="text-slate-400 block">{currentLang === 'en' ? 'Luxury single/double room' : 'Роскошный бутик-отель'}</span>
-              </div>
-              <div className="space-y-1">
-                <span className="block font-bold text-white">{currentLang === 'en' ? 'Private Chauffeur' : 'Личный водитель'}</span>
-                <span className="text-slate-400 block">{currentLang === 'en' ? 'Mercedes Airport pickup' : 'Трансфер на представительском авто'}</span>
-              </div>
-              <div className="space-y-1">
-                <span className="block font-bold text-white">24/7 Coordinator</span>
-                <span className="text-slate-400 block">{currentLang === 'en' ? 'Native speaking companion' : 'Личный координатор 24/7'}</span>
-              </div>
-              <div className="space-y-1">
-                <span className="block font-bold text-white">{currentLang === 'en' ? 'Airfare Voucher' : 'Компенсация перелета'}</span>
-                <span className="text-slate-400 block">{currentLang === 'en' ? 'Up to £250 credit applied' : 'Скидка на билет до £250'}</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Dynamic Savings Estimator */}
-      <InteractiveEstimator 
-        currentLang={currentLang} 
-        onBookSelectedPlan={triggerBookingModal} 
-      />
-
-      {/* 3-Step Journey Timeline */}
-      <section id="journey" className="py-24 relative overflow-hidden bg-slate-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">{currentLang === 'en' ? 'How it Works' : 'Как проходит поездка'}</span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-2">
-              {currentLang === 'en' ? 'Your Perfect Smile in 3 Steps' : 'Новая улыбка за 3 шага'}
-            </h2>
-            <p className="text-slate-400 mt-4 text-sm">
-              {currentLang === 'en' 
-                ? 'We handle all medical dental planning and travel logistics from start to finish.' 
-                : 'Мы берем на себя планирование стоматологического лечения и организацию поездки.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-            
-            {/* Connecting visual line for desktop */}
-            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500/20 via-indigo-500/20 to-teal-500/20 z-0" />
-
-            {journeySteps.map((step, index) => (
-              <div key={step.id} className="bg-slate-900/60 p-8 rounded-3xl border border-white/5 relative z-10 space-y-6 hover:border-white/10 transition-all flex flex-col justify-between">
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-4xl font-black bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent">
-                      0{step.id}
-                    </span>
-                    <div className="h-10 w-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-                      {index === 0 && <Tv className="h-5 w-5" />}
-                      {index === 1 && <Plane className="h-5 w-5" />}
-                      {index === 2 && <Sparkles className="h-5 w-5" />}
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-lg font-bold text-white">{step.title[currentLang]}</h3>
-                  <p className="text-slate-400 text-xs leading-relaxed">{step.description[currentLang]}</p>
-                </div>
-
-                <div className="pt-4 border-t border-white/5">
-                  <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block">
-                    {step.highlight[currentLang]}
-                  </span>
-                </div>
-              </div>
-            ))}
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* Patient Testimonials and Before/After slider stories */}
-      <section id="reviews" className="py-24 bg-slate-900/40 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">{currentLang === 'en' ? 'Verified Success Stories' : 'Истории наших пациентов'}</span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-2">
-              {currentLang === 'en' ? 'Loved by UK & USA Patients' : 'Нам доверяют пациенты из Великобритании и США'}
-            </h2>
-          </div>
-
-          {/* Testimonial slider / showcase */}
-          <div className="max-w-4xl mx-auto bg-slate-950 p-8 md:p-12 rounded-3xl border border-white/5 shadow-2xl space-y-8 relative">
-            <div className="absolute top-4 right-4 text-slate-700 font-serif text-8xl leading-none select-none">“</div>
-
-            <div className="flex flex-col md:flex-row gap-8 items-center">
-              
-              <img 
-                src={testimonialsData[activeTestimonialIndex].image} 
-                alt={testimonialsData[activeTestimonialIndex].name} 
-                className="w-24 h-24 rounded-2xl object-cover border border-cyan-400/30"
-              />
-
-              <div className="space-y-4 text-center md:text-left flex-1">
-                <div className="flex flex-wrap justify-center md:justify-start items-center gap-2">
-                  <span className="text-lg font-bold text-white">{testimonialsData[activeTestimonialIndex].name}</span>
-                  <span className="text-xs text-slate-400">{testimonialsData[activeTestimonialIndex].location} {testimonialsData[activeTestimonialIndex].flag}</span>
-                </div>
-
-                <div className="flex justify-center md:justify-start items-center space-x-1">
-                  {[...Array(testimonialsData[activeTestimonialIndex].rating)].map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                  ))}
-                  <span className="text-xs text-emerald-400 font-bold ml-2">({testimonialsData[activeTestimonialIndex].savings[currentLang]})</span>
-                </div>
-
-                <p className="text-slate-300 text-sm md:text-base leading-relaxed italic">
-                  "{testimonialsData[activeTestimonialIndex].text[currentLang]}"
-                </p>
-
-                <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider block">
-                  {currentLang === 'en' ? 'Procedure performed:' : 'Выполненное лечение:'} {testimonialsData[activeTestimonialIndex].treatment[currentLang]}
-                </div>
-              </div>
-
-            </div>
-
-            {/* Slider arrows */}
-            <div className="flex justify-between items-center pt-6 border-t border-white/5">
-              <span className="text-xs text-slate-500">
-                Patient {activeTestimonialIndex + 1} of {testimonialsData.length}
-              </span>
-              <div className="flex space-x-2">
-                <button 
-                  onClick={prevTestimonial}
-                  className="p-2 bg-slate-900 hover:bg-slate-800 rounded-xl border border-white/5 text-white cursor-pointer"
-                >
-                  ←
-                </button>
-                <button 
-                  onClick={nextTestimonial}
-                  className="p-2 bg-slate-900 hover:bg-slate-800 rounded-xl border border-white/5 text-white cursor-pointer"
-                >
-                  →
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* Accordion FAQ Section */}
-      <section id="faq" className="py-24 relative overflow-hidden bg-slate-950">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center mb-16">
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">{currentLang === 'en' ? 'FAQ' : 'Ответы на вопросы'}</span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-2">
-              {currentLang === 'en' ? 'Patient FAQ & Warranties' : 'Медицинские и Юридические детали'}
-            </h2>
-          </div>
-
-          <div className="space-y-4">
-            {faqData.map((faq) => (
-              <div 
-                key={faq.id} 
-                className="bg-slate-900/60 rounded-2xl border border-white/5 overflow-hidden transition-all duration-300"
+        <div className="max-w-6xl mx-auto w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <motion.div
+              className="space-y-8"
+              initial={{ opacity: 0, x: -60 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ 
+                duration: 1.2, 
+                ease: smoothEase,
+                staggerChildren: 0.15,
+                delayChildren: 0.3
+              }}
+            >
+              <motion.div
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-200"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: gentleEasing }}
               >
-                <button
-                  onClick={() => setActiveFaq(activeFaq === faq.id ? null : faq.id)}
-                  className="w-full text-left p-6 flex justify-between items-center text-white hover:text-cyan-300 transition-colors cursor-pointer"
+                <Sparkles className="w-4 h-4 text-blue-600" />
+                <span className="text-sm font-semibold text-blue-600">
+                  Excellence in Dental Care
+                </span>
+              </motion.div>
+
+              <motion.h1
+                className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.2, delay: 0.3, ease: gentleEasing }}
+              >
+                <span className="block text-gray-900">Your Perfect Smile</span>
+                <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
+                  Starts Here
+                </span>
+              </motion.h1>
+
+              <motion.p
+                className="text-xl text-gray-600 max-w-lg leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.5, ease: gentleEasing }}
+              >
+                Experience world-class dental care with cutting-edge technology, expert practitioners, and a commitment to your comfort and smile transformation.
+              </motion.p>
+
+              <motion.div
+                className="flex flex-col sm:flex-row gap-4 pt-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.7, ease: gentleEasing }}
+              >
+                <motion.a
+                  href="#contact"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-blue-400/50 transition-all group"
+                  whileHover={{ scale: 1.05, translateY: -2 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <span className="font-bold text-sm md:text-base pr-4">
-                    {faq.question[currentLang]}
-                  </span>
-                  <ChevronDown className={`h-5 w-5 text-slate-400 shrink-0 transition-transform duration-300 ${activeFaq === faq.id ? 'rotate-180 text-cyan-400' : ''}`} />
-                </button>
+                  <span>Book Your Appointment</span>
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </motion.a>
 
-                {activeFaq === faq.id && (
-                  <div className="px-6 pb-6 text-xs md:text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-4">
-                    {faq.answer[currentLang]}
+                <motion.button
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-300 text-gray-900 font-semibold rounded-xl hover:bg-gray-50 transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span>Learn More</span>
+                  <ChevronDown className="w-5 h-5 ml-2" />
+                </motion.button>
+              </motion.div>
+
+              {/* Stats */}
+              <motion.div
+                className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                {[
+                  { value: '500+', label: 'Happy Patients' },
+                  { value: '20+', label: 'Years Experience' },
+                  { value: '98%', label: 'Satisfaction' },
+                ].map((stat, i) => (
+                  <motion.div key={i} variants={itemVariants}>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900">
+                      {stat.value}
+                    </p>
+                    <p className="text-sm text-gray-600">{stat.label}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* Right Visual */}
+            <motion.div
+              className="relative h-96 lg:h-full min-h-96 hidden lg:flex items-center justify-center"
+              initial={{ opacity: 0, x: 80 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.4, delay: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <div className="relative w-full max-w-md">
+                {/* Gradient Blob */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-3xl blur-2xl"
+                  animate={{
+                    scale: [1, 1.05, 1],
+                    rotate: [0, 5, 0],
+                  }}
+                  transition={{ duration: 6, repeat: Infinity }}
+                />
+
+                {/* Card */}
+                <motion.div
+                  className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20"
+                  animate={{
+                    y: [0, -20, 0],
+                  }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                >
+                  <div className="space-y-6">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full flex items-center justify-center">
+                        <Sparkles className="w-8 h-8 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900">Premium Care</p>
+                        <p className="text-sm text-gray-600">5-star rated</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {['Professional Cleaning', 'Digital X-rays', 'Smile Consultation'].map(
+                        (item, i) => (
+                          <div key={i} className="flex items-center space-x-3">
+                            <Check className="w-5 h-5 text-cyan-500" />
+                            <span className="text-gray-700">{item}</span>
+                          </div>
+                        )
+                      )}
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <p className="text-sm text-gray-600">Starting from</p>
+                      <p className="text-3xl font-bold text-gray-900">£49</p>
+                    </div>
                   </div>
-                )}
+                </motion.div>
               </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <ChevronDown className="w-6 h-6 text-blue-600" />
+        </motion.div>
+      </section>
+
+      {/* Social Proof Section */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            <p className="text-sm font-semibold text-blue-600 mb-2">TRUSTED BY</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+              Thousands of Satisfied Patients
+            </h2>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            {[
+              { icon: Star, label: '4.9 Rating' },
+              { icon: Users, label: '500+ Patients' },
+              { icon: Award, label: 'Award Winning' },
+              { icon: Clock, label: '24/7 Available' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                className="flex flex-col items-center space-y-3"
+                variants={itemVariants}
+              >
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <item.icon className="w-6 h-6 text-blue-600" />
+                </div>
+                <p className="font-semibold text-gray-900 text-center">{item.label}</p>
+              </motion.div>
             ))}
-          </div>
-
+          </motion.div>
         </div>
       </section>
 
-      {/* Premium CTA & Interactive Lead Capture Block */}
-      <section className="py-20 relative overflow-hidden bg-slate-900 border-t border-white/5">
-        <div className="max-w-5xl mx-auto px-4 text-center space-y-8 relative z-10">
-          
-          <div className="inline-flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-            <Award className="h-3.5 w-3.5" />
-            <span>{currentLang === 'en' ? 'ISO 9001 CERTIFIED CLINIC' : 'СЕРТИФИЦИРОВАННАЯ КЛИНИКА ISO 9001'}</span>
-          </div>
+      {/* Services Section */}
+      <section id="services" className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            <p className="text-sm font-semibold text-blue-600 mb-3">OUR SERVICES</p>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+              Comprehensive Dental Solutions
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              From routine care to advanced cosmetic procedures, we offer everything you need for optimal oral health.
+            </p>
+          </motion.div>
 
-          <h2 className="text-3xl md:text-6xl font-black text-white tracking-tight leading-tight">
-            {currentLang === 'en' ? 'Get Your Premium Smile Consultation' : 'Закажите полный просчёт улыбки'}
-          </h2>
-
-          <p className="text-slate-400 text-sm md:text-base max-w-2xl mx-auto font-light leading-relaxed">
-            {currentLang === 'en' 
-              ? 'Our coordinator provides a free comprehensive 3D Smile mockup and a complete quotation including flights and luxury accommodation.' 
-              : 'Наш координатор подготовит бесплатный ИИ-анализ улыбки и полный расчет поездки с учетом билетов и проживания.'}
-          </p>
-
-          <div className="max-w-xl mx-auto">
-            <LiveInteractiveScheduler 
-              currentLang={currentLang} 
-              prefilledTreatment={prefilledTreatment} 
-            />
-          </div>
-
-          <div className="flex flex-wrap justify-center items-center gap-6 text-slate-400 text-xs pt-8 border-t border-white/5">
-            <span className="flex items-center gap-1">
-              <Lock className="h-3.5 w-3.5 text-cyan-400" />
-              {currentLang === 'en' ? 'HIPAA & GDPR Secure' : '100% Конфиденциально'}
-            </span>
-            <span className="flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" />
-              {currentLang === 'en' ? 'Written Contract Guarantee' : 'Официальный договор'}
-            </span>
-            <span className="flex items-center gap-1">
-              <Coins className="h-3.5 w-3.5 text-cyan-400" />
-              {currentLang === 'en' ? 'No Hidden Charges' : 'Цены фиксируются в договоре'}
-            </span>
-          </div>
-
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            {services.map((service, i) => (
+              <ServiceCard key={i} service={service} index={i} />
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* Luxury Footer */}
-      <footer className="py-16 bg-slate-950 border-t border-white/10 relative z-10 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            
-            {/* Column 1 */}
-            <div className="space-y-4">
-              <span className="text-lg font-bold text-white tracking-tight">{copy.navLogo}</span>
-              <p className="text-[11px] leading-relaxed">
-                {currentLang === 'en' 
-                  ? 'Providing celebrity-grade restorative and cosmetic dentistry services to European standards with luxury travel concierges.' 
-                  : 'Предоставление стоматологических услуг премиального уровня по европейским стандартам с VIP-сопровождением.'}
+      {/* Benefits Section */}
+      <section id="about" className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <motion.div
+              className="space-y-8"
+              initial={{ opacity: 0, x: -60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true, margin: '-100px' }}
+            >
+              <div>
+                <p className="text-sm font-semibold text-blue-600 mb-3">WHY CHOOSE US</p>
+                <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">
+                  Why Patients Love Us
+                </h2>
+              </div>
+
+              <motion.div
+                className="space-y-6"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-100px' }}
+              >
+                {benefits.map((benefit, i) => (
+                  <motion.div key={i} className="space-y-2" variants={itemVariants}>
+                    <div className="flex items-start space-x-4">
+                      <div className="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                        <Check className="w-5 h-5 text-cyan-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 text-lg">
+                          {benefit.title}
+                        </h3>
+                        <p className="text-gray-600 mt-1">{benefit.description}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* Right Visual */}
+            <motion.div
+              className="relative h-96 hidden lg:block"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true, margin: '-100px' }}
+            >
+              <div className="relative w-full h-full">
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-3xl backdrop-blur-xl border border-white/20"
+                  animate={{
+                    scale: [1, 1.02, 1],
+                  }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                />
+
+                <div className="relative p-8 h-full flex flex-col justify-center">
+                  <motion.div
+                    className="space-y-6"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    viewport={{ once: true, margin: '-100px' }}
+                  >
+                    {[
+                      { label: 'Experience', value: '20+ Years' },
+                      { label: 'Dentists', value: '12 Specialists' },
+                      { label: 'Success Rate', value: '99.2%' },
+                    ].map((item, i) => (
+                      <div key={i} className="space-y-1">
+                        <p className="text-sm text-gray-600">{item.label}</p>
+                        <p className="text-2xl font-bold text-gray-900">{item.value}</p>
+                      </div>
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            <p className="text-sm font-semibold text-blue-600 mb-3">TESTIMONIALS</p>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">
+              What Our Patients Say
+            </h2>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            {testimonials.map((testimonial, i) => (
+              <TestimonialCard key={i} testimonial={testimonial} index={i} />
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            <p className="text-sm font-semibold text-blue-600 mb-3">PRICING</p>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+              Plans for Every Budget
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Flexible pricing options to fit your needs and budget
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            {pricingPlans.map((plan, i) => (
+              <PricingCard key={i} plan={plan} index={i} />
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            <p className="text-sm font-semibold text-blue-600 mb-3">FAQ</p>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">
+              Frequently Asked Questions
+            </h2>
+          </motion.div>
+
+          <motion.div
+            className="space-y-4"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            {faqs.map((faq, i) => (
+              <FAQItem key={i} faq={faq} index={i} />
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section
+        id="contact"
+        className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-cyan-500 relative overflow-hidden"
+      >
+        {/* Animated Background - Slower ambient motion */}
+        <div className="absolute inset-0 -z-10 opacity-20">
+          <motion.div
+            className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.3, 1],
+              x: [0, 80, 0],
+              y: [0, 40, 0],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-0 right-0 w-80 h-80 bg-white/50 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, -60, 0],
+              y: [0, -30, 0],
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+          />
+        </div>
+
+        <motion.div
+          className="max-w-4xl mx-auto text-center space-y-8"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
+          viewport={{ once: true, margin: '-100px' }}
+        >
+          <div className="space-y-4">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white">
+              Ready to Transform Your Smile?
+            </h2>
+            <p className="text-lg text-white/90 max-w-2xl mx-auto">
+              Book your consultation today and take the first step towards a brighter, healthier smile.
+            </p>
+          </div>
+
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center pt-6"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            <motion.a
+              href="tel:+441234567890"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:shadow-lg transition-all"
+              whileHover={{ scale: 1.05, translateY: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              <span>Call Us Now</span>
+            </motion.a>
+
+            <motion.button
+              className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition-all"
+              whileHover={{ scale: 1.05, translateY: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Mail className="w-5 h-5 mr-2" />
+              <span>Email Us</span>
+            </motion.button>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            {/* Brand */}
+            <motion.div
+              className="space-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-white">DentalCare</span>
+              </div>
+              <p className="text-gray-400">
+                Premium dental care with world-class service and cutting-edge technology.
               </p>
-              <div className="flex space-x-3 text-slate-400">
-                <a href="#" className="hover:text-white">Twitter</a>
-                <span>•</span>
-                <a href="#" className="hover:text-white">Instagram</a>
-                <span>•</span>
-                <a href="#" className="hover:text-white">YouTube</a>
-              </div>
-            </div>
+            </motion.div>
 
-            {/* Column 2 - British line */}
-            <div className="space-y-3">
-              <span className="block text-white font-bold uppercase tracking-wider">{currentLang === 'en' ? 'UK Patient Desk' : 'Для пациентов из Великобритании'}</span>
-              <p className="text-[11px]">VIP Harley Street Support Line:</p>
-              <a href="tel:+442079460012" className="block text-slate-300 hover:text-white font-bold">+44 20 7946 0012</a>
-              <p className="text-[10px] text-slate-600">London, United Kingdom</p>
-            </div>
+            {/* Quick Links */}
+            <motion.div
+              className="space-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="font-semibold text-white">Quick Links</h3>
+              <ul className="space-y-2">
+                {navItems.map((item, i) => (
+                  <li key={i}>
+                    <a
+                      href={item.href}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
 
-            {/* Column 3 - USA line */}
-            <div className="space-y-3">
-              <span className="block text-white font-bold uppercase tracking-wider">{currentLang === 'en' ? 'US Patient Desk' : 'Для пациентов из США'}</span>
-              <p className="text-[11px]">VIP Manhattan Support Line:</p>
-              <a href="tel:+12125550199" className="block text-slate-300 hover:text-white font-bold">+1 212 555 0199</a>
-              <p className="text-[10px] text-slate-600">New York, NY, USA</p>
-            </div>
+            {/* Services */}
+            <motion.div
+              className="space-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="font-semibold text-white">Services</h3>
+              <ul className="space-y-2">
+                {services.slice(0, 3).map((service, i) => (
+                  <li key={i}>
+                    <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                      {service.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
 
-            {/* Column 4 - Medical Credentials */}
-            <div className="space-y-3">
-              <span className="block text-white font-bold uppercase tracking-wider">Certifications</span>
-              <div className="space-y-1.5">
-                <span className="block">✓ ADA Certified Surgeons</span>
-                <span className="block">✓ General Dental Council UK Registered</span>
-                <span className="block">✓ ISO 9001 Clinic Standards</span>
-                <span className="block">✓ Nobel Biocare Diamond Partner</span>
-              </div>
-            </div>
-
+            {/* Contact */}
+            <motion.div
+              className="space-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="font-semibold text-white">Contact</h3>
+              <ul className="space-y-3">
+                <li className="flex items-start space-x-3">
+                  <MapPin className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-400">
+                    123 Dental Street
+                    <br />
+                    London, UK
+                  </span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <Phone className="w-5 h-5 text-cyan-400" />
+                  <a href="tel:+441234567890" className="text-gray-400 hover:text-white">
+                    +44 123 456 7890
+                  </a>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <Mail className="w-5 h-5 text-cyan-400" />
+                  <a href="mailto:hello@dentalcare.uk" className="text-gray-400 hover:text-white">
+                    hello@dentalcare.uk
+                  </a>
+                </li>
+              </ul>
+            </motion.div>
           </div>
 
-          <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px]">
-            <p>© 2026 DENTAL.UK Dental Tourism LLC. All Rights Reserved. General Dental Council reg #84910.</p>
-            <div className="flex space-x-4">
-              <a href="#" className="hover:underline">Privacy Policy</a>
-              <a href="#" className="hover:underline">Medical Disclaimer</a>
-              <a href="#" className="hover:underline">Terms of Service</a>
+          {/* Social Links */}
+          <motion.div
+            className="border-t border-gray-800 pt-8 flex flex-col sm:flex-row items-center justify-between"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-gray-400 text-sm mb-4 sm:mb-0">
+              © 2024 DentalCare UK. All rights reserved.
+            </p>
+            <div className="flex items-center space-x-4">
+              {[Share2, Mail, Phone].map((Icon, i) => (
+                <motion.a
+                  key={i}
+                  href="#"
+                  className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-cyan-500 hover:text-white transition-all"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Icon className="w-5 h-5" />
+                </motion.a>
+              ))}
             </div>
-          </div>
-
+          </motion.div>
         </div>
       </footer>
+    </div>
+  );
+}
 
-      {/* Scheduler Modal Popup */}
-      {isSchedulerOpen && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="relative w-full max-w-xl my-8">
-            <button 
-              onClick={() => setIsSchedulerOpen(false)}
-              className="absolute -top-3 -right-3 md:top-4 md:right-4 h-8 w-8 bg-slate-900 border border-white/20 text-white rounded-full flex items-center justify-center font-bold hover:bg-slate-800 transition-all cursor-pointer z-50"
+// Service Card Component
+function ServiceCard({ service, index }: { service: any; index: number }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const smoothEase: any = [0.4, 0, 0.2, 1];
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 35 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { 
+        duration: 1, 
+        delay: index * 0.12,
+        ease: smoothEase 
+      },
+    },
+  };
+
+  return (
+    <motion.div
+      className="group relative h-full"
+      variants={itemVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-80px' }}
+    >
+      {/* Background Glow */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-cyan-500/0 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"
+      />
+
+      {/* Card */}
+      <motion.div
+        className="relative h-full bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500"
+        whileHover={{
+          scale: 1.03,
+          y: -8,
+          transition: { 
+            duration: 0.5, 
+            ease: smoothEase 
+          }
+        }}
+      >
+        <div className="space-y-6">
+          {/* Icon */}
+          <motion.div
+            className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center"
+            whileHover={{ rotate: 12, scale: 1.1 }}
+            transition={{ type: 'spring', stiffness: 400 }}
+          >
+            <service.icon className="w-7 h-7 text-blue-600" />
+          </motion.div>
+
+          {/* Content */}
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold text-gray-900">{service.title}</h3>
+            <p className="text-gray-600 leading-relaxed">{service.description}</p>
+          </div>
+
+          {/* Arrow */}
+          <motion.div
+            className="flex items-center space-x-2 text-blue-600 font-semibold pt-4 group-hover:translate-x-2 transition-transform"
+            whileHover={{ x: 5 }}
+          >
+            <span>Learn More</span>
+            <ArrowRight className="w-5 h-5" />
+          </motion.div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Testimonial Card Component
+function TestimonialCard({ testimonial, index }: { testimonial: any; index: number }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const smoothEase: any = [0.4, 0, 0.2, 1];
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 35 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { 
+        duration: 1, 
+        delay: index * 0.15,
+        ease: smoothEase 
+      },
+    },
+  };
+
+  return (
+    <motion.div
+      className="group"
+      custom={index}
+      variants={itemVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-100px' }}
+    >
+      <motion.div
+        className="h-full bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8 border border-blue-100/50 backdrop-blur-xl"
+        whileHover={{
+          scale: 1.02,
+          y: -5,
+          transition: { duration: 0.4, ease: smoothEase }
+        }}
+      >
+        {/* Stars */}
+        <div className="flex items-center space-x-1 mb-4">
+          {Array.from({ length: testimonial.rating }).map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              transition={{ delay: i * 0.1 }}
+              viewport={{ once: true }}
             >
-              ✕
-            </button>
-            <LiveInteractiveScheduler 
-              currentLang={currentLang} 
-              prefilledTreatment={prefilledTreatment}
-              onClose={() => setIsSchedulerOpen(false)}
-            />
+              <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Quote */}
+        <p className="text-gray-700 mb-6 leading-relaxed">"{testimonial.content}"</p>
+
+        {/* Author */}
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold">
+            {testimonial.initials}
+          </div>
+          <div>
+            <p className="font-semibold text-gray-900">{testimonial.name}</p>
+            <p className="text-sm text-gray-600">{testimonial.role}</p>
           </div>
         </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Pricing Card Component
+function PricingCard({ plan, index }: { plan: any; index: number }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const smoothEase: any = [0.4, 0, 0.2, 1];
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 35 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { 
+        duration: 1, 
+        delay: index * 0.12,
+        ease: smoothEase 
+      },
+    },
+  };
+
+  return (
+    <motion.div
+      className={`group relative h-full ${plan.popular ? 'md:scale-105 md:z-10' : ''}`}
+      custom={index}
+      variants={itemVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-100px' }}
+    >
+      {/* Popular Badge */}
+      {plan.popular && (
+        <motion.div
+          className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20"
+          initial={{ scale: 0, y: -20 }}
+          whileInView={{ scale: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+          viewport={{ once: true }}
+        >
+          <div className="px-4 py-1 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-semibold rounded-full">
+            Most Popular
+          </div>
+        </motion.div>
       )}
 
-    </div>
+      {/* Card */}
+      <motion.div
+        className={`h-full rounded-2xl p-8 backdrop-blur-xl border transition-all duration-500 ${
+          plan.popular
+            ? 'bg-white/95 border-blue-300 shadow-2xl'
+            : 'bg-white/50 border-white/50 hover:border-blue-200'
+        }`}
+        whileHover={{
+          scale: 1.02,
+          y: -5,
+          transition: { duration: 0.4, ease: smoothEase }
+        }}
+      >
+        <div className="space-y-8 h-full flex flex-col">
+          {/* Header */}
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
+            <p className="text-gray-600 text-sm">{plan.description}</p>
+          </div>
+
+          {/* Price */}
+          <div className="space-y-1">
+            <div className="flex items-baseline space-x-1">
+              <span className="text-4xl font-bold text-gray-900">£{plan.price}</span>
+              <span className="text-gray-600 text-sm">/month</span>
+            </div>
+          </div>
+
+          {/* Features */}
+          <motion.div
+            className="space-y-4 flex-grow"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            {plan.features.map((feature: string, i: number) => (
+              <motion.div
+                key={i}
+                className="flex items-center space-x-3"
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 + i * 0.05 }}
+                viewport={{ once: true }}
+              >
+                <Check className="w-5 h-5 text-cyan-500 flex-shrink-0" />
+                <span className="text-gray-700 text-sm">{feature}</span>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* CTA Button */}
+          <motion.button
+            className={`w-full py-3 rounded-xl font-semibold transition-all ${
+              plan.popular
+                ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:shadow-lg hover:shadow-blue-400/50'
+                : 'border-2 border-gray-300 text-gray-900 hover:bg-gray-50'
+            }`}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Get Started
+          </motion.button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// FAQ Item Component
+function FAQItem({ faq, index }: { faq: any; index: number }) {
+  const [open, setOpen] = React.useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const smoothEase: any = [0.4, 0, 0.2, 1];
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 25 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { 
+        duration: 0.8, 
+        delay: index * 0.08,
+        ease: smoothEase 
+      },
+    },
+  };
+
+  return (
+    <motion.div
+      custom={index}
+      variants={itemVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-100px' }}
+    >
+      <motion.button
+        onClick={() => setOpen(!open)}
+        className="w-full px-6 py-4 bg-white/50 backdrop-blur-xl border border-white/50 rounded-xl text-left hover:bg-white/70 transition-all"
+        whileHover={{ scale: 1.01 }}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-gray-900 pr-8">{faq.question}</h3>
+          <motion.div
+            animate={{ rotate: open ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex-shrink-0"
+          >
+            <ChevronDown className="w-5 h-5 text-blue-600" />
+          </motion.div>
+        </div>
+      </motion.button>
+
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{
+          opacity: open ? 1 : 0,
+          height: open ? 'auto' : 0,
+        }}
+        transition={{ duration: 0.3 }}
+        className="overflow-hidden"
+      >
+        <div className="px-6 py-4 bg-blue-50/50 border border-t-0 border-white/50 rounded-b-xl border-l border-r border-b">
+          <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
